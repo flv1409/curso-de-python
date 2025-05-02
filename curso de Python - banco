@@ -1,0 +1,72 @@
+import datetime
+
+# Variáveis principais
+saldo = 0.0
+limite_saque = 500.0
+extrato = []
+numero_saques = 0
+LIMITE_SAQUES_DIARIOS = 3
+
+def formatar_valor(valor):
+    return f"R$ {valor:,.2f}".replace('.', ',').replace(',', '.', 1)
+
+def depositar():
+    global saldo
+    valor = float(input("Digite o valor do depósito: "))
+    if valor > 0:
+        saldo += valor
+        extrato.append(f"Depósito: {formatar_valor(valor)}")
+        print("Depósito realizado com sucesso!")
+    else:
+        print("Operação falhou: o valor do depósito deve ser positivo.")
+
+def sacar():
+    global saldo, numero_saques
+    valor = float(input("Digite o valor do saque: "))
+    if valor <= 0:
+        print("Operação falhou: o valor do saque deve ser positivo.")
+    elif valor > limite_saque:
+        print(f"Operação falhou: o valor máximo de saque é {formatar_valor(limite_saque)}.")
+    elif numero_saques >= LIMITE_SAQUES_DIARIOS:
+        print("Operação falhou: número máximo de saques diários atingido.")
+    elif valor > saldo:
+        print("Operação falhou: saldo insuficiente.")
+    else:
+        saldo -= valor
+        numero_saques += 1
+        extrato.append(f"Saque: {formatar_valor(valor)}")
+        print("Saque realizado com sucesso!")
+
+def exibir_extrato():
+    print("\n====== EXTRATO ======")
+    if not extrato:
+        print("Não foram realizadas movimentações.")
+    else:
+        for movimento in extrato:
+            print(movimento)
+        print(f"\nSaldo atual: {formatar_valor(saldo)}")
+    print("=====================\n")
+
+def menu():
+    while True:
+        print("Escolha uma operação:")
+        print("[d] Depositar")
+        print("[s] Sacar")
+        print("[e] Extrato")
+        print("[q] Sair")
+        opcao = input("Opção: ").lower()
+
+        if opcao == 'd':
+            depositar()
+        elif opcao == 's':
+            sacar()
+        elif opcao == 'e':
+            exibir_extrato()
+        elif opcao == 'q':
+            print("Encerrando sistema. Obrigado por usar nosso banco!")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+# Iniciar o sistema
+menu()
