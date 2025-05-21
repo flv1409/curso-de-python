@@ -59,7 +59,7 @@ class conta:
             return True
         
         else:
-            print("\n@@@ Operação Falhou! O valor informadoè invalido. @@@")
+            print("\n@@@ Operação Falhou! O valor informado è invalido. @@@")
         return False
     
     def depositar(self,valor):
