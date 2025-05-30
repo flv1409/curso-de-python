@@ -1,0 +1,160 @@
+📒 Descriçãofrom fastapi import FastAPI
+from pydantic import BaseModel
+from enum import Enum
+
+app = FastAPI()
+
+class Status(str, Enum):
+    NATTY = "Natty"
+    NOT_NATTY = "Not Natty"
+    SUSPEITO = "Suspeito (analisar mais)"
+
+class AtletaInput(BaseModel):
+    nome: str
+    idade: int
+    altura_cm: float
+    peso_kg: float
+    gordura_percentual: float  # em %
+    tempo_treinando_anos: float
+
+class ResultadoNatty(BaseModel):
+    nome: str
+    status: Status
+    motivo: str
+
+@app.post("/natty-or-not", response_model=ResultadoNatty)
+def analisar_natty(atleta: AtletaInput):
+    altura_m = atleta.altura_cm / 100
+    imc_muscular = atleta.peso_kg / (altura_m ** 2)
+
+    # Regras básicas de "suspeita"
+    if imc_muscular > 28 and atleta.gordura_percentual < 7:
+        status = Status.NOT_NATTY
+        motivo = "Altíssima densidade muscular com gordura muito baixa."
+    elif atleta.tempo_treinando_anos < 1 and imc_muscular > 26:
+        status = Status.NOT_NATTY
+        motivo = "Ganho muscular incomum em pouco tempo de treino."
+    elif imc_muscular < 23:
+        status = Status.NATTY
+        motivo = "Composição corporal compatível com físico natural."
+    else:
+        status = Status.SUSPEITO
+        motivo = "Resultados intermediários, exigem mais análise."
+
+    return ResultadoNatty(
+        nome=atleta.nome,
+        status=status,
+        motivo=motivo
+    )
+"Natty or Not" é um projeto que utiliza Inteligência Artificial para analisar imagens e/ou descrições físicas e estimar, de forma educativa e lúdica, se um físico é provavelmente natural (sem uso de esteroides anabolizantes) ou "not" (com auxílio de substâncias).
+
+⚠️ Este projeto é apenas para fins de estudo, entretenimento e educação. Não se destina a julgamentos pessoais nem a diagnósticos reais.
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+
+
+🤖 Tecnologias Utilizadas
+OpenAI GPT-4 – Para interpretação de descrições e linguagem natural
+
+OpenAI 4o (imagens) – Análise visual com IA
+
+FastAPI – Backend para servir o modelo
+
+Python – Linguagem principal
+
+fastapi-pagination – Paginação de dados
+
+Pillow/OpenCV – Processamento básico de imagem (opcional)
+
+GitHub – Versionamento de código
+
+Figma – Protótipos visuais (UI/UX do painel de resultados)
+
+🧐 Processo de Criação
+Coleta de dados de treino/validação (físicos de atletas, históricos, medidas)
+
+Desenvolvimento do classificador com base em imagens ou descrições físicas
+
+Criação de API com FastAPI e endpoints personalizados (com query nome, idade, peso, etc.)
+
+Tratamento de exceções, respostas personalizadas e mensagens educativas
+
+Implementação de paginação e filtros de busca
+
+Interface (opcional) para upload de imagens ou entrada de texto
+
+🚀 Resultados
+✅ Classificação de físico com base em parâmetros visuais ou textuais
+
+✅ Explicação da probabilidade com linguagem acessível e educativa
+
+✅ Backend estruturado com boas práticas e documentação em Swagger
+
+✅ Pronto para integração com front-end web ou mobile
+
+Exemplo de resposta:
+
+json
+Copiar
+Editar
+{
+  "nome": "João",
+  "classificação": "Provavelmente Not Natty",
+  "motivo": "Volume muscular desproporcional à estrutura óssea, baixa porcentagem de gordura corporal de forma permanente, e presença de veias altamente visíveis."
+}
+💭 Reflexão (Opcional)
+Esse projeto brinca com um tema muito presente nas redes sociais e no mundo do fitness, mas também traz à tona debates importantes sobre saúde, padrões estéticos e uso consciente da tecnologia. Foi divertido explorar os limites do que uma IA pode sugerir, sempre lembrando que nenhum algoritmo substitui a análise clínica ou a ética pessoal.
