@@ -1,0 +1,35 @@
+1. Criando Pacotes Python
+A criação de um pacote em Python é uma ótima forma de organizar seu código, torná-lo reutilizável e compartilhável. A forma mais moderna e recomendada de fazer isso é usando as seguintes ferramentas:
+
+Estrutura de Arquivos: Comece criando uma estrutura de pastas para seu projeto.
+
+meu_pacote/
+├── src/
+│   └── meu_pacote_core/
+│       ├── __init__.py
+│       └── modulo.py
+└── pyproject.toml
+meu_pacote/: Pasta raiz do projeto.
+
+src/: Pasta para o código fonte.
+
+meu_pacote_core/: A pasta que será seu pacote.
+
+__init__.py: Arquivo vazio que indica que a pasta é um pacote Python.
+
+modulo.py: Um módulo qualquer com seu código.
+
+pyproject.toml: Este arquivo é a chave para gerenciar as dependências e a forma como seu pacote é construído. Use-o para especificar informações do projeto, como nome, versão, autor e dependências. A ferramenta Poetry é uma das mais populares para simplificar essa tarefa.
+
+Publicando o Pacote: Para que outras pessoas possam usar seu pacote, você precisa publicá-lo em um repositório como o PyPI (Python Package Index). Isso pode ser feito com ferramentas como o Poetry ou setuptools.
+
+2. Criando Slides com Python
+Se o seu objetivo é criar apresentações (slides) usando Python, existem algumas bibliotecas excelentes que simplificam muito o processo, permitindo que você gere slides a partir do seu código.
+
+Marp: Embora não seja uma biblioteca Python, é uma das melhores ferramentas para criar slides a partir de arquivos Markdown. Você pode facilmente escrever seu conteúdo em Markdown e usar um script Python para converter e exportar os slides em PDF ou HTML.
+
+Pyppeteer ou Selenium: Se você precisa de automação para capturar páginas web e transformá-las em slides, essas bibliotecas permitem controlar navegadores de forma programática. Por exemplo, você pode abrir uma página web, rolar a tela e capturar screenshots para montar sua apresentação.
+
+matplotlib e bokeh: Para apresentações focadas em visualização de dados, essas bibliotecas são essenciais. Você pode gerar gráficos e visualizações diretamente no seu código Python e, em seguida, exportá-los como imagens para inserir em seus slides.
+
+Jupyter Notebook: Esta não é uma ferramenta para criar slides diretamente, mas é um ambiente interativo onde você pode combinar código, texto, gráficos e visualizações. Com a extensão nbconvert, você pode facilmente exportar seu notebook como um slideshow.
