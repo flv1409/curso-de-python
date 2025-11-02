@@ -1,280 +1,156 @@
-Excelente! 👏
-Adicionar scripts Bash ao repositório vai deixar seu projeto muito mais completo e prático — mostrando domínio real da AWS CLI.
+ #Cálculo de Impostos em uma Fatura de Compras
+
+
+
+import java.util.*;
+
+
+public class ImpostosFatura {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Lê o número de produtos
+        int n = scanner.nextInt();
+        
+        // Variável para armazenar o valor total da fatura
+        double totalFatura = 0.0;
+        
+        // Loop para ler os produtos
+        for (int i = 0; i < n; i++) {
+            // Lê valor do produto
+            double valorProduto = scanner.nextDouble();
+            
+            // Lê categoria do produto
+            String categoria = scanner.next();
+            
+            double imposto = 0.0;
+            
+            // Calcula o imposto baseado na categoria
+            if (categoria.equals("A")) {
+                imposto = valorProduto * 0.10;
+            } else if (categoria.equals("B")) {
+                imposto = valorProduto * 0.15;
+            } else if (categoria.equals("C")) {
+                imposto = valorProduto * 0.20;
+            }
+            
+            // Soma o valor do produto com o imposto ao total da fatura
+            totalFatura += valorProduto + imposto;
+        }
+        
+        // Imprime o valor total da fatura com 2 casas decimais
+        System.out.printf("%.2f\n", totalFatura);
+        
+        scanner.close();
+    }
+}
+
+
+#Simulação de Fila de Atendimento ao Cliente
+
+
+
+import java.util.*;
+
+
+public class FilaAtendimento {
+
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Lê o número de clientes
+        int n = scanner.nextInt();
+        
+        // Lista para armazenar os clientes: [id, prioridade, ordemEntrada]
+        List<int[]> fila = new ArrayList<>();
+        
+        // Lê os clientes
+        for (int i = 0; i < n; i++) {
+            int id = scanner.nextInt();
+            int prioridade = scanner.nextInt();
+            fila.add(new int[]{id, prioridade, i}); // guarda ordem de entrada como desempate
+        }
+        
+        // Ordena a fila pela prioridade (decrescente), e em caso de empate, pela ordem de entrada
+        Collections.sort(fila, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] c1, int[] c2) {
+                if (c1[1] != c2[1]) {
+                    return Integer.compare(c2[1], c1[1]); // prioridade decrescente
+                } else {
+                    return Integer.compare(c1[2], c2[2]); // ordem de chegada
+                }
+            }
+        });
+        
+        // Imprime os IDs dos clientes na ordem de atendimento
+        for (int i = 0; i < fila.size(); i++) {
+            System.out.print(fila.get(i)[0]);
+            if (i < fila.size() - 1) {
+                System.out.print(" ");
+            }
+        }
+        
+        scanner.close();
+    }
+}
+
+
+ #Ordenação de Vendas de Produtos em uma Loja Online
+
 
-Aqui está o README atualizado com uma nova seção /scripts, incluindo exemplos prontos de criação, inicialização, parada e encerramento de instâncias EC2 — tudo automatizado.
-Você só precisa copiar os arquivos .sh e ajustar o ID da instância conforme o seu ambiente.
 
-
----
-
-💻 Gerenciamento de Instâncias EC2 na AWS
-
-📘 Sobre o Projeto
-
-Este repositório foi desenvolvido como parte do desafio da Digital Innovation One (DIO), com o objetivo de consolidar o aprendizado sobre gerenciamento de instâncias EC2 na Amazon Web Services (AWS).
-
-A proposta é aplicar na prática os conceitos vistos nas aulas, documentando o processo de criação, configuração e gerenciamento de uma instância EC2 — tanto via Console AWS quanto via AWS CLI e scripts automatizados.
-
-
----
-
-🎯 Objetivos de Aprendizagem
-
-Aplicar na prática os conceitos aprendidos sobre EC2;
-
-Automatizar tarefas com AWS CLI e scripts Bash;
-
-Documentar processos técnicos de forma clara e organizada;
-
-Utilizar o GitHub como ferramenta de portfólio técnico.
-
-
-
----
-
-☁️ Estrutura do Projeto
-
-aws-ec2-gerenciamento/
-│
-├── README.md               # Documentação principal
-├── /images                 # Prints do laboratório
-└── /scripts                # Scripts Bash para automação AWS CLI
-
-
----
-
-☁️ Tópicos Abordados
-
-Criação e configuração de uma instância EC2;
-
-Geração e uso de chaves SSH;
-
-Acesso remoto via terminal;
-
-Gerenciamento de Security Groups;
-
-Associação de Elastic IP;
-
-Encerramento seguro da instância;
-
-Automação via scripts AWS CLI.
-
-
-
----
-
-🛠️ Passo a Passo Realizado
-
-1. Criação da Instância
-
-1. Acesse o Console AWS → EC2 → Launch Instance
-
-
-2. Configurações utilizadas:
-
-Nome: DIO-EC2-Lab
-
-AMI: Amazon Linux 2
-
-Tipo: t2.micro
-
-Par de chaves: dio-key.pem
-
-Security Group: portas 22 (SSH) e 80 (HTTP) liberadas
-
-
-
-
-
----
-
-2. Conectando via SSH
-
-chmod 400 dio-key.pem
-ssh -i "dio-key.pem" ec2-user@<IP_DA_INSTANCIA>
-
-
----
-
-3. Configurando o Ambiente
-
-Atualização do sistema e instalação de ferramentas básicas:
-
-sudo yum update -y
-sudo yum install git -y
-
-
----
-
-💻 Automação com AWS CLI e Scripts Bash
-
-Abaixo estão os scripts prontos que podem ser salvos na pasta /scripts/.
-
-
----
-
-🔹 01-create-instance.sh
-
-Cria uma nova instância EC2 e salva o ID em um arquivo local.
-
-#!/bin/bash
-
-echo "🚀 Criando nova instância EC2..."
-
-aws ec2 run-instances \
-  --image-id ami-0c55b159cbfafe1f0 \
-  --instance-type t2.micro \
-  --key-name dio-key \
-  --security-group-ids sg-xxxxxxxxxxxxx \
-  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=DIO-EC2-Lab}]' \
-  --query 'Instances[0].InstanceId' \
-  --output text > instance-id.txt
-
-echo "✅ Instância criada com ID: $(cat instance-id.txt)"
-
-
----
-
-🔹 02-start-instance.sh
-
-Inicia a instância criada.
-
-#!/bin/bash
-
-INSTANCE_ID=$(cat instance-id.txt)
-
-echo "▶️ Iniciando instância $INSTANCE_ID..."
-aws ec2 start-instances --instance-ids $INSTANCE_ID
-echo "✅ Instância iniciada!"
-
-
----
-
-🔹 03-stop-instance.sh
-
-Para a instância em execução.
-
-#!/bin/bash
-
-INSTANCE_ID=$(cat instance-id.txt)
-
-echo "⏸ Parando instância $INSTANCE_ID..."
-aws ec2 stop-instances --instance-ids $INSTANCE_ID
-echo "✅ Instância parada!"
-
-
----
-
-🔹 04-terminate-instance.sh
-
-Encerra (deleta) a instância definitivamente.
-
-#!/bin/bash
-
-INSTANCE_ID=$(cat instance-id.txt)
-
-echo "🗑 Encerrando instância $INSTANCE_ID..."
-aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-echo "✅ Instância encerrada e removida!"
-
-
----
-
-🔹 05-describe-instance.sh
-
-Exibe informações detalhadas sobre a instância.
-
-#!/bin/bash
-
-INSTANCE_ID=$(cat instance-id.txt)
-
-echo "🔍 Consultando status da instância $INSTANCE_ID..."
-aws ec2 describe-instances --instance-ids $INSTANCE_ID \
-  --query 'Reservations[*].Instances[*].[InstanceId,State.Name,PublicIpAddress]' \
-  --output table
-
-
----
-
-⚙️ Como Usar os Scripts
-
-1. Certifique-se de que a AWS CLI esteja instalada e configurada:
-
-aws configure
-
-
-2. Acesse a pasta /scripts e torne os scripts executáveis:
-
-chmod +x *.sh
-
-
-3. Execute conforme a necessidade:
-
-./01-create-instance.sh
-./02-start-instance.sh
-./05-describe-instance.sh
-./03-stop-instance.sh
-./04-terminate-instance.sh
-
-
-
-
----
-
-📸 Evidências
-
-As capturas de tela estão na pasta /images, contendo:
-
-instancia-criada.png
-
-conexao-ssh.png
-
-instancia-finalizada.png
-
-
-Use a sintaxe Markdown para incluir as imagens no README:
-
-![Instância criada](./images/instancia-criada.png)
-
-
----
-
-📚 Recursos Consultados
-
-Documentação oficial da AWS EC2
-
-Documentação da AWS CLI
-
-Guia GitHub Markdown
-
-DIO - Formação AWS Cloud Practitioner
-
-
-
----
-
-🧑‍💻 Autor
-
-flv1409
-🔗 GitHub Profile
-
-
----
-
-💬 Dica Final
-
-Esses scripts tornam o gerenciamento de instâncias totalmente automatizado — ideal para quem deseja dominar infraestrutura como código e se preparar para certificações AWS.
-Você pode evoluir o projeto adicionando:
-
-Variáveis de ambiente para diferentes ambientes (dev, test, prod);
-
-Scripts Python usando boto3;
-
-Integração com pipelines CI/CD.
-
-
-
----
-
-Quer que eu gere também os arquivos .sh prontos (com cabeçalhos, comentários e formatação de código para copiar e colar direto)?
-Posso montar os cinco scripts completos e formatados.
+import java.util.*;
+
+
+public class VendasProdutos {
+
+
+     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        int n = scanner.nextInt();
+        scanner.nextLine();  
+        
+        List<String[]> produtos = new ArrayList<>();
+        
+        // Lê os produtos com a quantidade vendida e o preço
+        for (int i = 0; i < n; i++) {
+            String linha = scanner.nextLine();
+            String[] partes = linha.split(" ");
+            
+            String nome = partes[0];
+            int quantidade = Integer.parseInt(partes[1]);
+            double preco = Double.parseDouble(partes[2]);
+            
+            produtos.add(new String[]{nome, String.valueOf(quantidade), String.valueOf(preco)});
+        }
+        
+        // Ordena os produtos:
+        // 1) Quantidade vendida (decrescente)
+        // 2) Em caso de empate, preço (decrescente)
+        produtos.sort((a, b) -> {
+            int q1 = Integer.parseInt(a[1]);
+            int q2 = Integer.parseInt(b[1]);
+            double p1 = Double.parseDouble(a[2]);
+            double p2 = Double.parseDouble(b[2]);
+            
+            if (q1 != q2) {
+                return Integer.compare(q2, q1); // quantidade desc
+            } else {
+                return Double.compare(p2, p1); // preço desc
+            }
+        });
+        
+        // Imprime os produtos na ordem correta
+        for (int i = 0; i < produtos.size(); i++) {
+            System.out.print(produtos.get(i)[0]);
+            if (i < produtos.size() - 1) {
+                System.out.print(" ");
+            }
+        }
+        
+        scanner.close();
+    }
+}
