@@ -1,0 +1,60 @@
+def busca_binaria(lista, item):
+    """
+    Implementa o algoritmo de busca binária para encontrar um item em uma lista ordenada.
+
+    Args:
+        lista (list): Uma lista de elementos que deve estar ordenada.
+        item: O elemento a ser buscado na lista.
+
+    Retorna:
+        int: O índice do item se encontrado, caso contrário, retorna -1.
+    """
+    # Define os limites inferior e superior da busca
+    baixo = 0
+    alto = len(lista) - 1
+
+    # Continua buscando enquanto o intervalo de busca for válido
+    while baixo <= alto:
+        # Encontra o meio do intervalo atual (uso de // para garantir inteiro)
+        meio = (baixo + alto) // 2
+        
+        # Pega o valor no índice do meio
+        chute = lista[meio]
+
+        # Compara o chute com o item que estamos procurando
+        if chute == item:
+            # Encontramos o item! Retorna o índice.
+            return meio
+        
+        if chute > item:
+            # O chute foi muito alto. Ajusta o limite superior para a metade inferior da lista.
+            alto = meio - 1
+        else:
+            # O chute foi muito baixo. Ajusta o limite inferior para a metade superior da lista.
+            baixo = meio + 1
+            
+    # Se o loop terminar sem encontrar o item, ele não está na lista.
+    return -1
+
+# --- Exemplo de Uso ---
+
+# A busca binária exige que a lista esteja ordenada!
+minha_lista_ordenada = [1, 3, 5, 7, 9, 11, 13, 15, 17]
+
+item_procurado_1 = 11
+indice_1 = busca_binaria(minha_lista_ordenada, item_procurado_1)
+
+print(f"Buscando {item_procurado_1} na lista:")
+if indice_1 != -1:
+    print(f"  > Item encontrado no índice: {indice_1}")
+else:
+    print(f"  > Item não encontrado.")
+
+item_procurado_2 = 4
+indice_2 = busca_binaria(minha_lista_ordenada, item_procurado_2)
+
+print(f"\nBuscando {item_procurado_2} na lista:")
+if indice_2 != -1:
+    print(f"  > Item encontrado no índice: {indice_2}")
+else:
+    print(f"  > Item não encontrado.")
