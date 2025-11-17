@@ -1,0 +1,104 @@
+app/
+|-- main.py
+|-- models.py
+|-- schemas.py
+|-- database.py
+|-- crud.py
+|-- routers/
+|   |-- accounts.py
+|   |-- transactions.py
+
+# app/database.py
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker, declarative_base
+
+DATABASE_URL = "postgresql+asyncpg://user:password@localhost/bankdb"
+
+engine = create_async_engine(DATABASE_URL, echo=True)
+Base = declarative_base()
+AsyncSessionLocal = sessionmaker(
+    engine, expire_on_commit=False, class_=AsyncSession
+)
+
+async def get_db_session() -> AsyncSession:
+    async with AsyncSessionLocal() as session:
+        yield session
+
+# app/models.py
+from sqlalchemy import Column, Integer, String, Float
+from .database import Base
+
+class ContaBancaria(Base):
+    __tablename__ = "contas"
+    id = Column(Integer, primary_key=True, index=True)
+    numero_conta = Column(String, unique=True, index=True)
+    saldo = Column(Float, default=0.0)
+    titular = Column(String)
+
+# app/schemas.py
+from pydantic import BaseModel
+
+class ContaBase(BaseModel):
+    numero_conta: str
+    titular: str
+    saldo: float = 0.0
+
+class ContaCreate(ContaBase):
+    pass
+
+class Conta(ContaBase):
+    id: int
+    class Config:
+        orm_mode = True
+
+class DepositoSaque(BaseModel):
+    valor: float
+
+# app/crud.py
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from .models import ContaBancaria
+from .schemas import ContaCreate
+
+async def get_conta(db: AsyncSession, conta_id: int):
+    result = await db.execute(select(ContaBancaria).filter(ContaBancaria.id == conta_id))
+    return result.scalar_one_or_none()
+
+async def create_conta(db: AsyncSession, conta: ContaCreate):
+    db_conta = ContaBancaria(**conta.dict())
+    db.add(db_conta)
+    await db.commit()
+    await db.refresh(db_conta)
+    return db_conta
+
+# app/routers/accounts.py
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from ..database import get_db_session
+from .. import crud, schemas
+
+router = APIRouter(prefix="/contas", tags=["contas"])
+
+@router.post("/", response_model=schemas.Conta)
+async def criar_conta(conta: schemas.ContaCreate, db: AsyncSession = Depends(get_db_session)):
+    return await crud.create_conta(db, conta)
+
+@router.get("/{conta_id}", response_model=schemas.Conta)
+async def ler_conta(conta_id: int, db: AsyncSession = Depends(get_db_session)):
+    db_conta = await crud.get_conta(db, conta_id)
+    if db_conta is None:
+        raise HTTPException(status_code=404, detail="Conta não encontrada")
+    return db_conta
+
+# app/main.py
+from fastapi import FastAPI
+from .routers import accounts
+
+app = FastAPI(title="API Bancária Assíncrona")
+
+app.include_router(accounts.router)
+
+@app.get("/")
+async def read_root():
+    return {"Boas vindas": "API Bancária Assíncrona com FastAPI"}
+
